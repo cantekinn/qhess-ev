@@ -1,0 +1,21 @@
+# Kompakt EV - araç dinamiği parametreleri
+# Referans: Renault Zoe / Fiat 500e / Peugeot e-208 sınıfı
+
+vehicle:
+  name: "Kompakt EV"
+  mass_kg: 1300
+  frontal_area_m2: 2.2
+  drag_coef_cd: 0.30
+  rolling_coef: 0.012
+  drivetrain_eff: 0.92      # motor + invertör verimliliği (motoring)
+  regen_eff: 0.65           # rejen tekerlek->batarya/süperkap verimliliği
+  gravity: 9.81
+  air_density: 1.225
+  peak_power_kW: 45.0
+  max_speed_kmh: 160.0
+
+# CS2 hücre tek olarak simüle ediliyor.
+# Pack faktörü, kW seviyesindeki araç gücünü hücre seviyesine indirir.
+# 45 kW peak / 5500 = 8.18 W per cell (CS2 max 8.14 W'a yakın → süperkap olmadan limit civarı)
+pack:
+  factor: 5500              # P_cell = P_pack / factor

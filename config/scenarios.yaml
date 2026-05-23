@@ -1,0 +1,57 @@
+# Test/eğitim senaryoları — hız profili parametreleri (m/s veya km/h)
+
+city_stop_go:
+  title: "Şehir İçi Dur-Kalk"
+  description: "Trafikte 0-50 km/h tekrarlı hızlanma ve fren. Regen aktif → süperkap doluyor."
+  duration_s: 120
+  slope_deg: 0.0
+  pattern: "stop_go"
+  v_max_kmh: 50
+  accel_phase_s: 8
+  cruise_phase_s: 8
+  brake_phase_s: 6
+  idle_phase_s: 4
+
+overtaking:
+  title: "Sollama"
+  description: "80 km/h cruise, sonra 5s'de 120 km/h, sonra geri 90 km/h. Kısa süreli PEAK."
+  duration_s: 60
+  slope_deg: 0.0
+  pattern: "overtaking"
+  v_cruise_kmh: 80
+  v_peak_kmh: 120
+  peak_start_s: 20
+  peak_accel_s: 5
+  peak_hold_s: 5
+  decel_back_s: 5
+  v_after_kmh: 90
+
+highway_cruise:
+  title: "Otoyol Sabit Hız"
+  description: "100 km/h sabit hızda seyahat. Orta sabit talep, batarya yeterli."
+  duration_s: 90
+  slope_deg: 0.0
+  pattern: "cruise"
+  v_kmh: 100
+  ramp_up_s: 6
+
+mixed_urban:
+  title: "Karma Şehir Trafiği"
+  description: "Dur-kalk + sollama + cruise karışımı. RL adaptasyon testi."
+  duration_s: 180
+  slope_deg: 0.0
+  pattern: "mixed"
+  segments:
+    - {type: "stop_go", v_max_kmh: 50, dur_s: 60}
+    - {type: "cruise",  v_kmh: 70,    dur_s: 30}
+    - {type: "overtaking", v_peak_kmh: 100, v_after_kmh: 60, dur_s: 30}
+    - {type: "stop_go", v_max_kmh: 40, dur_s: 60}
+
+mountain_climb:
+  title: "Dağ Tırmanışı"
+  description: "%6 eğim, 60 km/h sabit hız. Sürekli yüksek talep → süperkap destek kritik."
+  duration_s: 150
+  slope_deg: 3.43            # arctan(0.06) ≈ 3.43°
+  pattern: "cruise"
+  v_kmh: 60
+  ramp_up_s: 8

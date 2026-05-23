@@ -1,0 +1,36 @@
+# Demand-aware shaped reward — convergence için tasarlandı
+# r_t = R_base + R_match_demand + R_supply_quality - P_loss_norm - I_bat_stress - C_violation
+
+base:
+  reward_per_step: 1.0          # yaşamak için sabit küçük bonus
+
+match_demand:
+  # demand 0-1 → batarya tercih edilmeli (a=0 veya a=1)
+  # demand 2   → orta paylaşım (a=2)
+  # demand 3-4 → süperkap aktif (a=3 veya a=4)
+  low_demand_battery_bonus: 2.0    # a in {0,1} ve demand in {0,1}
+  low_demand_supercap_penalty: -2.0
+  mid_demand_balance_bonus: 2.0
+  mid_demand_extreme_penalty: -1.0
+  high_demand_supercap_bonus: 3.0
+  high_demand_battery_penalty: -3.0
+
+supply_quality:
+  # ratio = P_supplied / P_load
+  full_supply_bonus: 2.0           # ratio in [0.9, 1.05]
+  tolerable_supply_bonus: 0.0      # ratio in [0.7, 0.9]
+  undersupply_slope: 2.0           # ratio < 0.7 için negative
+  oversupply_slope: 1.0            # ratio > 1.05 için negative
+  good_low: 0.9
+  good_high: 1.05
+  tol_low: 0.7
+
+ohmic_loss:
+  scale_W: 5.0                     # P_loss / 5.0 reward'a katılır
+
+battery_stress:
+  threshold_frac: 0.7              # I_bat > 0.7*I_max'tan sonra cezalandır
+  weight: 5.0                      # (max(0, |I|-thr))^2 * weight
+
+constraint:
+  per_violation: 5.0               # her ihlal başına -5

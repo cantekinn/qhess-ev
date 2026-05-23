@@ -1,0 +1,28 @@
+# Q-Learning eğitim hiperparametreleri (DQN kaldırıldı)
+
+common:
+  dt_s: 1.0                # zaman adımı (saniye)
+  max_steps_per_episode: 200
+  episodes: 150
+  seed: 42
+
+q_learning:
+  learning_rate: 0.15
+  discount_factor: 0.95
+  epsilon_start: 1.0
+  epsilon_min: 0.05
+  epsilon_decay: 0.985
+  replay_last_n: 100        # episode sonunda son N adımı tekrar update et
+  init_battery_bias: 0.5    # Q[s,a=0] başlangıç ödülü (batarya tercihi bias)
+  state_bins:
+    p_load: [0.5, 1.5, 3.5, 6.0]
+    soc_bat: [0.25, 0.55, 0.80]
+    soc_sc: [0.30, 0.55, 0.80]
+
+actions:
+  # Batarya / Süperkap güç paylaşım oranı
+  - [1.00, 0.00]
+  - [0.75, 0.25]
+  - [0.50, 0.50]
+  - [0.25, 0.75]
+  - [0.00, 1.00]

@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+.eggs/
+build/
+dist/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Project-specific
+data_cache/
+!data_cache/.gitkeep
+
+# LaTeX build artifacts
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc
+docs/*.synctex.gz
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.bbl
+docs/*.blg
+docs/*.nav
+docs/*.snm
+docs/*.vrb
+
+# OS
+desktop.ini
+
+# Dataset (büyük, repo dışı)
+**/Endüstriyel Uygulamalarda Yapay Zeka Projesi/
+
+# Test/debug çıktıları
+*.tmp
+debug_*.txt
+
+# Hassas dosyalar (varsa)
+.env
+*.key
+*.pem
+secrets.yaml

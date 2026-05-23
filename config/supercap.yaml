@@ -1,0 +1,19 @@
+# Süperkapasitör modül parametreleri — klasik RC + ESR
+# Tipik EDLC literatür değerleri (Maxwell BCAP serisi referans)
+
+cell:
+  C_F: 100.0              # kapasitans (Farad)
+  ESR_ohm: 0.012          # seri direnç
+  V_max: 2.7
+  V_min: 1.35             # genelde V_max/2, %75 enerji bu aralıkta
+  I_max_A: 50.0           # darbe akım kapasitesi
+  E_max_Wh: 0.1013        # 0.5*C*V^2 / 3600 = 0.1013 Wh
+
+soc_definition:
+  # Voltaj tabanlı SOC: (V - V_min) / (V_max - V_min)
+  # Enerji tabanlı SOC: (V^2 - V_min^2) / (V_max^2 - V_min^2)  — daha doğru
+  mode: "energy"          # "voltage" veya "energy"
+  soc_init: 1.0
+  soc_min: 0.05
+  soc_max: 1.0
+  soc_ref: 0.60           # SOC sustaining hedefi

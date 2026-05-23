@@ -1,0 +1,15 @@
+# Bidirectional DC-DC converter (batarya ve süperkap için ayrı)
+# Lisans seviyesinde: sabit verimlilik veya yük-bağımlı tek noktalı η eğrisi
+
+battery_converter:
+  eta_nominal: 0.94       # ortalama verim
+  eta_min: 0.85           # düşük yük bölgesi
+  P_rated_W: 25.0         # nominal güç (CS2 hücre × V_nom × C-rate)
+
+supercap_converter:
+  eta_nominal: 0.96
+  eta_min: 0.88
+  P_rated_W: 100.0        # ani darbe için yüksek
+
+bus:
+  V_dc_bus: 12.0          # DC bara hedef voltajı (varsayım)

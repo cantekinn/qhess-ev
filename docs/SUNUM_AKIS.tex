@@ -1,0 +1,913 @@
+% !TEX program = pdflatex
+% Derleme: pdflatex SUNUM_AKIS.tex
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\geometry{margin=2.2cm}
+
+\hypersetup{
+  colorlinks=true, linkcolor=blue!60!black, urlcolor=blue!60!black,
+  bookmarksopen=true
+}
+
+\definecolor{slayt}{RGB}{0,90,170}
+\definecolor{slytcontent}{RGB}{20,100,150}
+\definecolor{sayrenk}{RGB}{20,100,40}
+\definecolor{sorurenk}{RGB}{180,80,0}
+\definecolor{visualrenk}{RGB}{120,40,140}
+
+\newtcolorbox{slytboks}{
+  colback=blue!4, colframe=blue!50!black, boxrule=0.4pt,
+  arc=2pt, left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\bfseries SLAYTTA YAZACAGIN}, fonttitle=\bfseries\color{white}
+}
+
+\newtcolorbox{sayboks}{
+  colback=green!4, colframe=green!50!black, boxrule=0.4pt,
+  arc=2pt, left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\bfseries SUNUMDA SOYLEYECEGIN (Speaker Notes)}, fonttitle=\bfseries\color{white}
+}
+
+\newtcolorbox{soruboks}{
+  colback=orange!6, colframe=orange!60!black, boxrule=0.4pt,
+  arc=2pt, left=8pt, right=8pt, top=6pt, bottom=6pt,
+  title={\bfseries OLASI SORU \& CEVAP}, fonttitle=\bfseries\color{white}
+}
+
+\newtcolorbox{gorselboks}{
+  colback=purple!4, colframe=purple!50!black, boxrule=0.4pt,
+  arc=2pt, left=8pt, right=8pt, top=4pt, bottom=4pt,
+  title={\bfseries GORSEL ONERISI}, fonttitle=\bfseries\color{white}
+}
+
+\titleformat{\section}{\Large\bfseries\color{slayt}}{}{0pt}{}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small HESS Sunum Akisi}
+\fancyhead[R]{\small EUYZ458}
+\fancyfoot[C]{\small \thepage}
+
+\title{
+  \vspace{-1.2cm}
+  \textbf{\Huge HESS Akilli Guc Yoneticisi}\\[0.4em]
+  {\Large Sunum Akisi --- Slayt Icerik + Konusma Notlari}\\[0.4em]
+  {\large 24 Slayt + Q\&A}\\[1em]
+  {\normalsize Hedef sure: 15-20 dk anlatim + 5-10 dk Q\&A}
+}
+\author{Can Tekin \\ \small BTU EEM --- EUYZ458}
+\date{Bahar 2025--2026}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\begin{tcolorbox}[colback=yellow!8,colframe=yellow!50!black,boxrule=0.4pt]
+\textbf{Nasil kullan:}
+\begin{itemize}
+\item \textcolor{blue!50!black}{\textbf{Mavi kutu (SLAYTTA YAZACAGIN):}} PowerPoint'te slayda direkt yazacaklarin. Kisa, okunabilir.
+\item \textcolor{green!50!black}{\textbf{Yesil kutu (SOYLEYECEGIN):}} Sunum sirasinda agzindan cikacak metin. Speaker Notes alanina.
+\item \textcolor{purple!50!black}{\textbf{Mor kutu (GORSEL):}} Slayda eklenecek gorsel onerisi.
+\item \textcolor{orange!60!black}{\textbf{Turuncu kutu (Q\&A):}} Olasi hoca sorulari + cevaplar. Sadece sen okuyacaksin.
+\end{itemize}
+\end{tcolorbox}
+
+\tableofcontents
+\newpage
+
+% =============================================================================
+\section{Slayt 1 --- Kapak (30 sn)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{HESS Akilli Guc Yoneticisi}\\[0.3em]
+Q-Learning Tabanli Hibrit Enerji Depolama Sistemi\\[0.3em]
+Can Tekin --- BTU EEM --- EUYZ458 Bahar 2025-26
+\end{slytboks}
+
+\begin{gorselboks}
+EV silueti + batarya + superkapasitor ikonu, BTU logosu sag ust
+\end{gorselboks}
+
+\begin{sayboks}
+``Merhaba, EUYZ458 dersi kapsaminda gelistirdigim projeyi sunuyorum. Konum: elektrikli araclarda batarya ve superkapasitoru birlikte kullanan bir hibrit enerji depolama sistemini, pekistirmeli ogrenme ajani ile optimize etmek. Yaklasik 15 dakika anlatim, sonra demo ve sorular.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 2 --- Neden Bu Problem? (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Saf Batarya Yetmiyor: Sollama Problemi}
+\begin{itemize}
+\item 5 saniyede 80 $\to$ 120 km/h $\Rightarrow$ 45 kW ani guc
+\item Yuksek $I^2 R$ kaybi $\Rightarrow$ verim duser
+\item Yuksek akim $\Rightarrow$ sicaklik + cycle life kisalir
+\item Voltaj dususu $\Rightarrow$ motor gucu sinirlanir
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+Otoyolda sollayan EV fotografi + ust kosede ``45 kW PEAK!'' kirmizi etiketi
+\end{gorselboks}
+
+\begin{sayboks}
+``Bir senaryo dusunun: elektrikli aracinizla 80 km/h cruise'dayken sollamaya basliyorsunuz. 5 saniye icinde 120 km/h'a cikmaniz gerek. Bu, anlik olarak 45 kW seviyesinde guc talebi demek. Saf bir batarya bunu karsilayabilir, ama uc sorunla:
+
+Bir, akim buyudukce I-kare-R kaybi katlanarak artiyor, verim dusuyor. Iki, bu yuksek akim sicaklik ve yaslanma demek --- cycle life kisaliyor. Uc, batarya terminal voltaji dusuyor, motor yeterli guc alamiyor.
+
+Bu yuzden modern hibrit sistemlerde batarya yanina superkapasitor eklenir.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Superkap pahali degil mi?''\\
+\textbf{C:} Enerji yogunlugu dusuk oldugu icin kucuk modul yeterli, sadece darbe tamponu.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 3 --- Cozum: HESS (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Hibrit Enerji Depolama Sistemi (HESS)}
+\begin{itemize}
+\item Batarya $\Rightarrow$ enerji deposu (sabit yuk)
+\item Superkapasitor $\Rightarrow$ guc tamponu (darbe yuku)
+\item DC-DC donusturuculer $\Rightarrow$ ortak DC bara
+\item \textbf{RL Ajan} $\Rightarrow$ paylasim karari
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+Blok diyagram: Batarya $\to$ DC-DC $\to$ DC Bara $\leftarrow$ DC-DC $\leftarrow$ Superkap, sagda Motor, ustte RL Ajan oklari
+\end{gorselboks}
+
+\begin{sayboks}
+``Iste HESS topolojisi: enerji deposu olarak batarya, guc tamponu olarak superkapasitor. Ikisi de kendi DC-DC donusturucusu uzerinden ortak bir DC barayi besliyor.
+
+Batarya enerji yogunlugu yuksek ama guc yogunlugu dusuk. Superkap tam tersi: guc cok ama enerji az. Ikisini birlestirince --- sanki yaris arabasindaki turbo gibi --- normal suruste batarya, ani ihtiyacta superkap devreye giriyor.
+
+Asil soru burada: HER AN, hangi oranda paylasim yapacagiz? Iste RL ajani bunu cevapliyor.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Pasif paralel baglanti da olur, neden aktif kontrolcu?''\\
+\textbf{C:} Pasif sistemde paylasim sadece ic direnclere gore olur, optimum degil. Aktif kontrolcuyle her senaryoya farkli tepki verebiliyoruz.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 4 --- Neden RL? (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Yontemler Karsilastirmasi}
+\begin{itemize}
+\item Kural-tabanli: kolay, sezgisel, optimum degil
+\item LP-filter: sabit zaman sabiti, adaptif degil
+\item MPC: optimal, ama hesaplama yuku yuksek
+\item \textbf{RL: ogrenir, model bagimsiz, hizli inferans}
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+4 sutunlu karsilastirma tablosu, RL sutunu yesil renkli (tercih)
+\end{gorselboks}
+
+\begin{sayboks}
+``Bu paylasim karari icin 4 yaklasim var.
+
+Kural-tabanli: 'eger guc su esigi gecerse superkap ac' gibi if-else. Kolay ama sezgisel, optimum degil.
+
+LP-filter: yukun yuksek frekansli kismi superkapa, dusuk frekansli kismi bataryaya. HESS literatur klasigi, ama zaman sabiti sabit, adaptif degil.
+
+MPC: gelecegi ongoren optimal kontrol. Cok iyi ama hesaplama yuku yuksek ve sistemin dogru modeli lazim.
+
+RL: deneyimden ogreniyor, model bagimsiz, egitim sonrasi inferans tek tablo lookup yani cok hizli. Lisans seviyesinde anlasilabilir, sunumda da aciklanabilir. Tercihimiz buydu.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 5 --- MDP Temelleri (1.5 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Markov Karar Sureci (MDP)}
+\[ \mathcal{M} = (\mathcal{S}, \mathcal{A}, P, R, \gamma) \]
+\begin{itemize}
+\item $\mathcal{S}$: state uzayi
+\item $\mathcal{A}$: aksiyon uzayi
+\item $P$: gecis dinamikleri (bizde deterministik)
+\item $R$: odul fonksiyonu
+\item $\gamma$: indirim faktoru
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+Ajan $\leftrightarrow$ Cevre dongusu: $s_t \to a_t$ ileri ok, $r_{t+1}, s_{t+1}$ geri ok
+\end{gorselboks}
+
+\begin{sayboks}
+``RL bir Markov Karar Sureci olarak formule edilir. 5 elemani var: state uzayi, action uzayi, gecis dinamikleri P, reward fonksiyonu R, ve discount faktoru gamma.
+
+Calisma sekli: ajan her zaman adiminda cevreyi gozlemliyor, bir state aliyor. Bu state'e bakarak bir aksiyon seciyor. Cevre fiziksel olarak tepki veriyor: yeni bir state ve bir odul uretiyor. Ajan deneyimden Q tablosunu guncelliyor.
+
+Onemli olan Markov ozelligi: gelecek sadece su anki state'e bagli. Yani state'e tum anlamli bilgiyi koymamiz gerek. Bizim sistemde 8 boyutlu vektor kullandik, az sonra detayi gelecegim.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Gecis olasiligi P'yi modellediniz mi?''\\
+\textbf{C:} Hayir, bizimki deterministik fizik modeli (ODE cozucu), olasilik dagilimi yok. Bu da Q-Learning icin model-free yaklasimi uygun kiliyor.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 6 --- Bellman \& Q-Learning (1.5 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Q-Learning Algoritmasi}
+\[
+Q(s_t, a_t) \leftarrow Q(s_t, a_t) + \alpha[r_t + \gamma \max_{a'} Q(s_{t+1}, a') - Q(s_t, a_t)]
+\]
+\textbf{Politika:} epsilon-greedy
+\begin{itemize}
+\item Olasilik $\varepsilon$: rastgele (kesif)
+\item Olasilik $1-\varepsilon$: $\arg\max Q$ (somuru)
+\item Yakinsama: Watkins-Dayan 1992
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+TD update formulu BUYUK yazilmis, altinda epsilon-greedy diyagrami (iki ok: rastgele vs argmax)
+\end{gorselboks}
+
+\begin{sayboks}
+``Q fonksiyonu, bir state-action ciftinden baslayip optimal politikayla devam etmenin getirecegi beklenen kumulatif odul.
+
+Bellman optimum denklemi: Q-yildiz(s,a) eslittir anlik odul arti gamma carpi bir sonraki state'in en iyi Q degeri. Bu denklem kendi icinde tekrarli --- sabit noktasi optimum Q fonksiyonu.
+
+Q-Learning, bu denklemi ornekleme ile cozuyor. Update formulu: Q'yu, ogrenme orani alfa kadar TD hedefine dogru kaydir. TD hedefi eslittir anlik reward arti gamma carpi bir sonraki state'in maksimum Q'su.
+
+Aksiyon secimi epsilon-greedy ile: epsilon olasilikla rastgele, 1 eksi epsilon olasilikla en iyi bilinen aksiyon. Egitim ilerledikce epsilon azaliyor --- basta kesif, sonra somuru.
+
+Watkins ve Dayan 1992'de kanitladilar: yeterli kosullarda Q-Learning yakinsiyor.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Off-policy demek ne demek?''\\
+\textbf{C:} Bellman update'inde max aliyoruz, ajanin sectigi aksiyon degil. Yani davranis politikasi epsilon-greedy olabilir ama ogrendigi target politika tamamen greedy.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 7 --- State (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{State Vektoru (8 Boyut)}
+\[ s_t = [P_{load}, SOC_{bat}, SOC_{sc}, V_{bat}, V_{sc}, I_{bat,prev}, I_{sc,prev}, d] \]
+\begin{itemize}
+\item Anlik guc + 2 SOC + 2 voltaj + 2 onceki akim + demand
+\item Markov: tum anlamli bilgiyi tasir
+\item Demand: 0-4 ayrik seviye ($P/P_{peak}$ orani)
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+8 hucreli yatay vektor, her hucrenin altinda etiketi (P\_load, SOC\_bat, ...)
+\end{gorselboks}
+
+\begin{sayboks}
+``Bizim Markov state'imiz 8 boyutlu. Icinde:
+
+Anlik guc talebi (Watt cinsinden), iki kaynagin doluluk orani (SOC degerleri), iki kaynagin terminal voltaji, bir onceki adimdaki akimlar (dinamik bilgi icin), ve son olarak guc talebinin ayrik seviyesi yani 'demand kodu' --- sifirdan dorde kadar.
+
+Demand kodu, anlik gucu peak guce gore oranlayarak hesaplaniyor. Bu, ajanin 'su an dusuk mu orta mi yuksek mi talep var' diye siniflandirmasini kolaylastiriyor.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``8 boyutu tabular Q-table'da nasil tutuyorsunuz, kombinatorik patlamaz mi?''\\
+\textbf{C:} Hepsini tutmuyoruz! Sadece 4 boyutu (P\_load, SOC\_bat, SOC\_sc, demand) Q-table anahtarina ceviriyoruz, digerleri bilgi amacli.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 8 --- Action (45 sn)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{5 Ayrik Aksiyon --- Paylasim Orani}
+\begin{center}
+\begin{tabular}{cl}
+\toprule
+$a$ & $(r_{bat}, r_{sc})$ \\
+\midrule
+0 & (1.00, 0.00) --- yalniz batarya \\
+1 & (0.75, 0.25) \\
+2 & (0.50, 0.50) --- denge \\
+3 & (0.25, 0.75) \\
+4 & (0.00, 1.00) --- yalniz superkap \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{slytboks}
+
+\begin{gorselboks}
+5 satirlik tablo, sol sutun yesil-mavi gradient (batarya $\to$ superkap gecisi)
+\end{gorselboks}
+
+\begin{sayboks}
+``Aksiyon uzayimiz cok basit: 5 ayrik paylasim orani.
+
+a=0: tamamen batarya, superkap kullanilmiyor. a=4: tamamen superkap, batarya bekliyor. Aradakiler: 75/25, 50/50, 25/75.
+
+5 aksiyon yeterli granulartie veriyor (0.25 adim), ama Q-tablosunu yonetilebilir tutuyor: 400 maksimum state carpi 5 aksiyon eslittir 2000 hucre, hafizada hic sorun degil.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Surekli aksiyon (DDPG, SAC) daha iyi olmaz miydi?''\\
+\textbf{C:} Olabilirdi ama lisans seviyesinde overkill. 0.25 oran adimi bu uygulama icin yeterli cozunurluk.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 9 --- Environment Akisi (2 dk --- EN KRITIK)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{step(action): 8 Adim Fizik Donusumu}
+\begin{enumerate}
+\item Aksiyon $\to$ bara guc oranlari ($r_{bat}, r_{sc}$)
+\item Regen kontrolu (guvenlik override)
+\item Bara $\to$ hucre gucu (DC-DC verim)
+\item Guc $\to$ akim ($I = P/V$)
+\item Akim sinirlandirma (clip)
+\item Fizik adimi: 2RC ECM + RC+ESR
+\item Reward hesabi
+\item Next state ureti
+\end{enumerate}
+\end{slytboks}
+
+\begin{gorselboks}
+8 kutucuklu akis diyagrami, oklarla bagli, en kritik slayt --- bol yer ayir
+\end{gorselboks}
+
+\begin{sayboks}
+``Bu slayt projemin kalbi. Ajan bir aksiyon sectiginde ne oluyor?
+
+Adim bir: Aksiyondan batarya-superkap oranlarini cikariyoruz. Mesela a=2 icin 0.5 ve 0.5.
+
+Adim iki: Bara'ya hangi guc gidecek bunu carpiyoruz: P\_load carpi oran. Eger regenerasyon durumundaysak --- yani arac frenliyor --- buradaki oranlara guvenlik kurali uyguluyoruz: superkap doluysa fazlayi bataryaya gonder. Bu bilincli bir tasarim karari, RL'in yapmasi zor bir karar.
+
+Adim uc: Bara'da istenen guc icin hucrenin saglamasi gereken gucu, DC-DC verim egrisiyle hesapliyoruz.
+
+Adim dort: P eslittir V carpi I formuluyle hucre akimlarina ceviriyoruz.
+
+Adim bes: Akimlari fiziksel limitlerle kirpiyoruz.
+
+Adim alti: Bu akimlari batarya ve superkap fizik modellerine veriyoruz. 2RC Thevenin denklemleri cozuluyor, SOC ve voltaj guncelleniyor.
+
+Adim yedi: Reward hesaplaniyor.
+
+Adim sekiz: Yeni state uretiliyor, ajana donuluyor.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Regen sirasinda neden RL karar vermiyor?''\\
+\textbf{C:} Guvenlik. Dolu bataryaya regen yuklersek SOC max ihlali ve kalici hasar var. Bu fiziksel kisit, lisans projesi suresinde RL'in kesfetmesini bekleyemeyiz. Gelecek gelistirme.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 10 --- Reward Fonksiyonu (2 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{6 Terimli Fiziksel Reward}
+\[ r_t = R_{base} + R_{match} + R_{supply} - R_{loss} - R_{stress} - R_{viol} \]
+\begin{itemize}
+\item $R_{base} = +1$: yasam bonusu
+\item $R_{match}$: demand-action eslesmesi (shaping)
+\item $R_{supply}$: talep karsilanma kalitesi
+\item $R_{loss}$: ohmik kayip cezasi
+\item $R_{stress}$: yuksek akim cezasi (cycle life)
+\item $R_{viol} = -5$: SOC/V ihlali
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+6 ikonlu kartlar, her biri terim icin: \texttt{+} yesil, \texttt{-} kirmizi
+\end{gorselboks}
+
+\begin{sayboks}
+``Reward 6 terimden olusuyor.
+
+R\_base: arti bir, her adimda yasam bonusu. Bu onemli --- ihlal yapmadan adim atan ajan pozitif reward biriktiriyor, gradient sinyali aliyor.
+
+R\_match: demand seviyesiyle aksiyonun eslesmesi. Dusuk talepte batarya secerse arti iki, aksi halde eksi iki. Yuksek talepte superkap secerse arti uc. Bu shaping terim, egitim hizini dramatik artiriyor.
+
+R\_supply: talep karsilanma kalitesi. P\_supplied'in P\_load'a orani eger 0.9 ile 1.05 arasindaysa arti iki, disinda ceza.
+
+R\_loss: toplam ohmik kayip normalize edilip cikariliyor. Ajan kayiplari minimize etmeyi ogreniyor.
+
+R\_stress: batarya akimi I\_max'in yuzde 70'ini gecerse karesel ceza. Cycle life koruma.
+
+R\_violation: SOC veya voltaj siniri ihlal edilirse eksi bes buyuk ceza.
+
+Toplam reward bu altisinin toplami. Egitim sirasinda ortalama reward 280-340 platosuna yakinsiyor.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Bu shaping yapay degil mi, saf RL degil mi?''\\
+\textbf{C:} Dogru tespit. Ng 1999'da shaping'in optimum politikayi korudugu kanitlandi. Saf objektif reward ile binlerce episode'da yakinsama olurdu, lisans suresine sigmazdi.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 11 --- Batarya 2RC Thevenin (1.5 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Batarya Fiziksel Modeli (Plett 2015)}
+\[ V_{bat} = OCV(SOC) - I R_0 - V_{RC_1} - V_{RC_2} \]
+\begin{itemize}
+\item $R_0 = 85$ m$\Omega$ (ic direnc)
+\item $\tau_1 \approx 99$ s (elektrokimyasal polarizasyon)
+\item $\tau_2 \approx 540$ s (difuzyon)
+\item $Q_{nom} = 1.1$ Ah, CALCE CS2 LiCoO$_2$
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+2RC esdeger devre cizimi: OCV kaynagi $\to$ R0 $\to$ (R1$||$C1) $\to$ (R2$||$C2) $\to$ terminal
+\end{gorselboks}
+
+\begin{sayboks}
+``Bataryayi 2RC Thevenin esdeger devresi ile modelledim. Bu, Plett'in 2015 ders kitabindaki standart.
+
+Icinde: OCV (acik devre voltaji, SOC'a bagli), seri ic direnc R0, ve iki adet RC kolu. Birinci RC kisa zaman sabitli --- elektrokimyasal polarizasyon, yaklasik 100 saniye. Ikinci RC uzun zaman sabitli --- difuzyon, yaklasik 9 dakika.
+
+Terminal voltaj: OCV eksi I-carpi-R0 eksi iki RC kolundaki gerilim dusumu. SOC ise Coulomb counting ile takip ediliyor.
+
+RC kollarini forward-Euler ile cozmek hatali olurdu, kararsizlik olabilir. Bunun yerine exact exponential cozum kullandim: V\_RC[k+1] eslittir V\_RC[k] carpi exp(-dt/tau) arti I-R carpi (1 eksi exp(-dt/tau)). Bu Plett formulasyonu, sayisal olarak kararli.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``R0, R1, C1, R2, C2 degerleri nereden?''\\
+\textbf{C:} Plett kitabindan LiCoO2 hucreler icin tipik baslangic degerleri. Gelecek gelistirme olarak CS2 verisinden EIS/pulse fit yapilabilir.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 12 --- Superkap + Arac Dinamigi (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Diger Fiziksel Modeller}\\[0.3em]
+\textbf{Superkap (RC + ESR):}
+\begin{itemize}
+\item $C_{sc} = 100$ F, ESR = 12 m$\Omega$
+\item Enerji-tabanli SOC: $\frac{V^2 - V_{min}^2}{V_{max}^2 - V_{min}^2}$
+\end{itemize}
+\textbf{Arac (Newton II):}
+\[ F_{total} = ma + mgC_r + \tfrac{1}{2}\rho C_d A v^2 + mg\sin\theta \]
+\begin{itemize}
+\item Kompakt EV: 1300 kg, 45 kW peak
+\item Pack faktoru: 5500 (kW $\to$ W per cell)
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+Sol: superkap RC+ESR devre. Sag: arac kuvvet diyagrami (atalet, drag, rolling, grade oklari)
+\end{gorselboks}
+
+\begin{sayboks}
+``Superkapasitoru klasik RC arti ESR ile modelledim. Voltaj turevi eslittir eksi I bolu C, terminal voltaji eslittir V\_sc eksi I carpi ESR.
+
+Onemli bir nokta: SOC'u enerji-tabanli tanimladim, voltaj-tabanli degil. Cunku superkap enerjisi V karesi ile orantili. Voltaj-tabanli SOC yaniltici olur --- V\_max'in yarisinda SOC sifir gorunur ama enerji hala yuzde yetmis bes'tir.
+
+Arac dinamigi icin Newton ikinci yasasi: atalet arti rolling arti drag arti grade kuvvetleri. Bunu hiza carpinca tekerlek gucu, surucu zincir verimi ile bolunce pack gucu. Regenerasyonda tam tersi yon.
+
+Arac parametreleri kompakt EV: 1300 kg, 0.30 Cd, 45 kW peak. Renault Zoe / Fiat 500e sinifi.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Tek hucre simule ediyorsunuz ama arac pack seviyesinde, nasil uyumlu?''\\
+\textbf{C:} Pack faktoru 5500 kullandim. 45 kW / 5500 = 8.18 W per cell, CS2 hucrenin fiziksel max'i.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 13 --- CALCE CS2 Veri Seti (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Veri Kaynagi: CALCE (Maryland Univ.)}
+\begin{itemize}
+\item CS2: 1.1 Ah LiCoO$_2$ prizmatik hucre
+\item \texttt{main/CS2\_3/}: 39 xlsx cycling verisi
+\item \texttt{OCV-SOC/}: dusuk-akim karakterizasyon
+\item \texttt{Dynamic Driving Profiles/}: DST + FUDS
+\end{itemize}
+\textbf{Onemli:} OCV-SOC gercek deneysel veriden cikarildi, literatur formulu degil.
+\end{slytboks}
+
+\begin{gorselboks}
+CALCE logosu + CS2 hucre fotografi + uc klasor agaci
+\end{gorselboks}
+
+\begin{sayboks}
+``Veri icin Maryland Universitesi CALCE merkezinin acik erisim CS2 batarya verisini kullandim. CS2 hucreleri 1.1 amp-saat LiCoO2 prizmatik hucreler.
+
+Uc klasorden faydalandim: Birinci, ana cycling verisi --- 39 farkli xlsx dosyasi, farkli desarj akimlari. Ikinci, OCV-SOC karakterizasyon --- dusuk akim desarj egrileri. Ucuncu, dinamik surus profilleri --- DST ve FUDS standartlari.
+
+Onemli bir nokta: OCV-SOC egrisini literatur formulunden degil, gercek CALCE desarj verisinden cikardim. Akademik durustluk icin bu kritik.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 14 --- OCV-SOC Cikarim (1.5 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{OCV-SOC Algoritmasi (6 Adim)}
+\begin{enumerate}
+\item ZIP'leri ac, Arbin Channel sheet'leri bul
+\item Step bazli gruplama (Cycle, Step)
+\item En yavas desarj segmenti sec ($|I|$ kucuk, derin)
+\item SOC = $1 - (Q-Q_{min})/\Delta Q$
+\item Monotonik duzelt, ortala
+\item Saglik kontrolu: $OCV(1) > OCV(0)$
+\end{enumerate}
+\textbf{Sonuc:} 237 nokta, $OCV(0)=2.70$V, $OCV(1)=4.09$V
+\end{slytboks}
+
+\begin{gorselboks}
+6 kutucuklu akis + sonuc OCV-SOC egrisi grafigi (S sekli)
+\end{gorselboks}
+
+\begin{sayboks}
+``OCV-SOC egrisi 2RC modelinin kalbi. Su algoritmayla cikardim:
+
+Adim bir: CALCE ZIP'lerini aciyoruz, Arbin formatindaki Channel sheet'leri buluyoruz.
+
+Adim iki: Step bazli gruplama yapiyoruz --- her cycle her step'in ozetini cikariyoruz.
+
+Adim uc: En yavas desarj segmentini seciyoruz. Kriterler: akim kucuk (yani C/20 mertebesinde), derin desarj (Q\_nom'un yarisindan fazla), yeterli cozunurluk.
+
+Adim dort: SOC'u kapasite oraniyla hesapliyoruz.
+
+Adim bes: Monotonik duzeltme, tekrar eden SOC'leri ortliyoruz.
+
+Adim alti: Saglik kontrolu --- OCV(1) buyuk OCV(0) olmali.
+
+Sonuc: 237 nokta, OCV(0) yaklasik 2.70 V, OCV(1) yaklasik 4.09 V. CS2 LiCoO2 icin dogru aralik.
+
+Eger veri okunamazsa Chen-Mora analitik formulune fallback ediyoruz. Ama sag olsun, CALCE verisi temiz.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 15 --- 5 Test Senaryosu (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Gercekci Surus Senaryolari}
+\begin{itemize}
+\item \textbf{Sehir Dur-Kalk} (120 s): 0-50 km/h, sik regen
+\item \textbf{Sollama} (60 s): 80-120-90 km/h, kisa PEAK
+\item \textbf{Otoyol Cruise} (90 s): 100 km/h sabit
+\item \textbf{Karma Sehir} (180 s): dur-kalk + sollama
+\item \textbf{Dag Tirmanisi} (150 s): \%6 egim, surekli yuk
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+5 senaryonun hiz profili grafigi ust uste, farkli renkler
+\end{gorselboks}
+
+\begin{sayboks}
+``Ajani 5 farkli gercekci senaryoda egitiyoruz ve test ediyoruz.
+
+Sehir dur-kalk: 0-50 km/h tekrarli, NEDC ECE-15 turevi. Sik regen --- superkapi doldurma firsati.
+
+Sollama: 80 km/h cruise, sonra 5 saniyede 120 km/h, sonra geri 90 km/h. Kisa sureli peak.
+
+Otoyol cruise: 100 km/h sabit hiz. Orta sabit yuk.
+
+Karma sehir: dur-kalk arti cruise arti sollama. Adaptasyon testi.
+
+Dag tirmanisi: yuzde 6 egim, 60 km/h sabit. Surekli yuksek talep, superkap kritik.
+
+Her senaryo hiz profilinden Newton denklemleriyle guc profiline donusuyor. Cosine ease smoothing kullandim, gercekci hizlanma egrileri icin.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 16 --- Egitim Sureci (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Q-Learning Egitim}
+\begin{itemize}
+\item 500 episode, $\sim$25 saniye CPU
+\item Her episode: rastgele senaryo, 200 adim
+\item Episode sonu replay: son 100 transition
+\item Hyperparams: $\alpha=0.15, \gamma=0.95, \varepsilon: 1.0 \to 0.05$
+\item Sonuc: 27 unique state, reward 280-340 plato
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+Reward egrisi (ust) + epsilon decay egrisi (alt), iki panel
+\end{gorselboks}
+
+\begin{sayboks}
+``Egitim 500 episode surdu, yaklasik 25 saniye laptop CPU'da.
+
+Her episode'da: rastgele bir senaryo seciliyor, cevre sifirlaniyor, 200 adimlik dongu basliyor. Her adimda ajan epsilon-greedy ile aksiyon seciyor, cevre adim atiyor, ajan Q-update yapiyor. Episode sonunda 'replay' tetikleniyor --- son 100 transition tekrar update ediliyor, mini-batch benzeri pekistirme.
+
+Reward egrisinde uc faz gorunuyor: ilk yuz episode kesif baskin, dalgali ama yukseliste. Yuz ile iki yuz elli arasi politika oturuyor, ortalama hizla artiyor. Iki yuz elli sonrasi yakinsama, ortalama 280-340 platosunda.
+
+Q-tablosunda egitim sonunda 27 unique state aktif. Toplam mumkun state 400, yani yuzde alti bucuk coverage. Bu az gibi gorunse de senaryo bazli egitim oldugundan ajan zaten gormedigi bolgelere gitmiyor.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Daha cok episode neden degil?''\\
+\textbf{C:} Reward egrisi 250'den sonra plato. Daha cok episode iyilestirme getirmiyor, sadece zaman harciyor.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 17 --- Test Sonuclari (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Senaryo Bazli Basari Skorlari}
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+Senaryo & Basari & Pik $I_{bat}$ & Ihlal \\
+\midrule
+Sollama        & \textbf{\%98.0} & 0.25 A & 0 \\
+Sehir Dur-Kalk & \textbf{\%98.9} & 0.30 A & 0 \\
+Karma Sehir    & \textbf{\%96.2} & 0.42 A & 0 \\
+Otoyol         & $\sim$\%98 & 0.18 A & 0 \\
+Dag Tirmanisi  & $\sim$\%95 & 0.55 A & 0 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Ortalama \%97+, tum senaryolarda sifir ihlal}
+\end{slytboks}
+
+\begin{gorselboks}
+Buyuk yesil rozet ``\%97'' + bar chart 5 senaryo
+\end{gorselboks}
+
+\begin{sayboks}
+``Egitilmis ajani 5 senaryoda test ettim. Basari skoru 5 bilesenli agirlikli toplam: pik batarya akim korumasi yuzde 30, peak'te superkap kullanimi yuzde 25, regen sarji yuzde 20, ihlal yoklugu yuzde 15, talep karsilanma yuzde 10.
+
+Sonuclar: Sollama yuzde 98, Sehir dur-kalk yuzde 98.9, Karma sehir yuzde 96.2, Otoyol yaklasik yuzde 98, Dag tirmanisi yaklasik yuzde 95.
+
+Ortalama yuzde 97 uzerinde. Tum senaryolarda ihlal sifir. Pik batarya akimi I\_max olan 2.2 amperin cok altinda, en zorlu dag tirmanisinda bile 0.55 amper.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 18 --- Sollama Davranis Analizi (1.5 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Ogrenilmis Davranis: Sollama}
+\begin{itemize}
+\item $t<20$s: $a=1$ (\%75 bat, \%25 sc) --- cruise
+\item $20<t<25$s: $a=4$ (\%100 sc) --- \textbf{PEAK}
+\item $25<t<35$s: $a=3$ (\%25 bat, \%75 sc) --- yavaslama
+\item $t>35$s: $a=2, a=1$ --- kararli durum
+\end{itemize}
+\textbf{Mesaj:} Peak'te superkap, normalde batarya
+\end{slytboks}
+
+\begin{gorselboks}
+Uc panelli zaman serisi: ust hiz, orta aksiyon (renkli noktalar), alt SOC'lar
+\end{gorselboks}
+
+\begin{sayboks}
+``Bu en guzel slaytlardan biri. Sollama senaryosunda 20-25. saniye arasi peak yasaniyor.
+
+Aksiyon zaman serisine bakalim:
+
+Ilk 20 saniye: ajan a=1 secmis, yani yuzde 75 batarya yuzde 25 superkap. Cruise davranisi, batarya dominant.
+
+20'den 25'e: ajan a=4'e geciyor. Yuzde 100 superkap. Peak gucu superkap karsiliyor, batarya korunuyor.
+
+25'ten 35'e: ajan a=3'te kaliyor. Yuzde 25 batarya, yuzde 75 superkap. Yavaslama asamasi, superkap hala baskin.
+
+35 saniyeden sonra: yeniden a=2, sonra a=1. Kararli duruma donus.
+
+Bu tam istenen davranis: peak'te superkap aktif, normalde batarya, gecislerde karma. Ajan bu karari vermis, biz dikte etmedik.''
+\end{sayboks}
+
+\begin{soruboks}
+\textbf{S:} ``Bu davranisi reward shaping ile soylemediniz mi?''\\
+\textbf{C:} R\_match yuksek talepte superkapi odullendiriyor, dogru. Ama hangi tam aksiyonu ne kadar sure secmesi gerektigini ajan kendi ogrendi. Timing tamamen ogrenilmis.
+\end{soruboks}
+
+% =============================================================================
+\section{Slayt 19 --- Dashboard Tanitim (45 sn)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Streamlit Dashboard}
+\begin{itemize}
+\item Ana Sayfa: sistem ozeti, senaryo kartlari
+\item Egitim: hyperparam + canli reward grafigi
+\item \textbf{Simulasyon}: en zengin sayfa
+  \begin{itemize}
+  \item Animasyonlu arac, hiz gauge
+  \item Donut + 2 SOC bar + guc akis
+  \item 3'lu canli zaman serisi
+  \end{itemize}
+\end{itemize}
+\end{slytboks}
+
+\begin{gorselboks}
+3 sayfa screenshot mozaiki (ana sayfa kucuk, egitim orta, simulasyon buyuk)
+\end{gorselboks}
+
+\begin{sayboks}
+``Sistemi sunmak icin Streamlit ile bir dashboard gelistirdim. Uc sayfa var.
+
+Ana sayfa: sistem ozeti, 5 senaryo karti.
+
+Egitim sayfasi: hyperparametreleri ayarla, senaryolari sec, canli reward grafigi ile egit, model kaydet.
+
+Simulasyon sayfasi: en zengin sayfa. Animasyonlu arac, anlik hiz, mod bildirimi, donut chart ile guc paylasim yuzdesi, SOC barlari, guc akis diyagrami, canli zaman serileri.
+
+Streamlit hilesi olarak placeholder + time.sleep deseni ile gercek-zamanli animasyon yaptim. Her plotly chart icin unique key vermek gerek, yoksa duplicate ID hatasi geliyor.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 20 --- Demo (10 sn slayt + 4 dk demo)}
+% =============================================================================
+
+\begin{slytboks}
+\centering\Huge \textbf{Demo Zamani}\\[1em]
+\large Canli sistem gosterimi
+\end{slytboks}
+
+\begin{gorselboks}
+Buyuk play butonu ikonu, dashboard ekran goruntusu arkaplanda blur
+\end{gorselboks}
+
+\begin{sayboks}
+``Simdi canli demoya gececegim. Uc senaryo gosterecegim: sollama (peak davranisi icin), sehir dur-kalk (regen davranisi icin), dag tirmanisi (zorluk icin).''
+
+\textbf{Demo sirasi (4-5 dk):}
+\begin{enumerate}
+\item Ana sayfa $\to$ sistem bilesenleri goster
+\item Egitim sayfasi $\to$ kisa 50 episode egitim (kanit)
+\item Simulasyon $\to$ Sollama, 5x hizda oynat, animasyonu anlat
+\item Simulasyon $\to$ Sehir dur-kalk, regen davranisina dikkat cek
+\item Geri sunuma
+\end{enumerate}
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 21 --- Sinirliliklar (1 dk)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Bilinen Sinirliliklar (Akademik Durustluk)}
+\begin{enumerate}
+\item Q-tablo coverage \%6.8 (27/400 state)
+\item Tek hucre, pack imbalance modellenmedi
+\item Reward shaping yaklasik, saf RL degil
+\item Regen override hard-coded (guvenlik)
+\item Termal model yok
+\item Tek seed, varyans olculmedi
+\end{enumerate}
+\end{slytboks}
+
+\begin{gorselboks}
+6 madde, her birinin yaninda kucuk uyari ikonu (sari ucgen)
+\end{gorselboks}
+
+\begin{sayboks}
+``Akademik durustluk icin bilinen sinirliliklari acikca soyluyorum.
+
+Bir: Q-tablo coverage yuzde 6.8. Gormedigi state'lere genelleme yapamaz. Tabular yontemin dogal siniri.
+
+Iki: Tek hucre simulasyonu. Pack cell imbalance, thermal coupling modellenmedi.
+
+Uc: Reward shaping yaklasik potansiyel-tabanli degil. Teorik optimum politika garantisi yok.
+
+Dort: Regen override hard-coded. RL bu karari vermiyor.
+
+Bes: Termal model yok. Sicaklik sabit kabul.
+
+Alti: Tek seed calistirma, istatistiksel varyans yok.
+
+Bu sinirliliklar bilincli muhendislik kararlari, gelecek calismada ele alinabilir. Ozellikle DQN'e gecis, termal model ekleme, baseline karsilastirmasi guzel uzantilar olurdu.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 22 --- Sonuc (45 sn)}
+% =============================================================================
+
+\begin{slytboks}
+\textbf{Basardiklarimiz}
+\begin{itemize}
+\item[$\checkmark$] Fiziksel HESS environment (2RC + RC+ESR + DC-DC)
+\item[$\checkmark$] CALCE verisinden OCV-SOC cikarimi
+\item[$\checkmark$] Newtonian arac + 5 gercekci senaryo
+\item[$\checkmark$] Q-Learning ajan, yakinsayan egitim
+\item[$\checkmark$] Tum senaryolarda \%96+, sifir ihlal
+\item[$\checkmark$] Streamlit dashboard
+\end{itemize}
+\textbf{Anahtar mesaj:} Ajan, peak'lerde superkapa otomatik gecmeyi ogrendi
+\end{slytboks}
+
+\begin{gorselboks}
+6 yesil tikli liste, alta buyuk yesil rozet ``\%97 BASARI''
+\end{gorselboks}
+
+\begin{sayboks}
+``Ozetle basardiklarimiz: Fiziksel olarak dogru HESS environment, gercek CALCE verisinden OCV-SOC cikarimi, Newtonian arac dinamigi arti 5 gercekci senaryo, tabular Q-Learning ajan basariyla yakinsayan egitim, tum senaryolarda yuzde 96 uzeri basari sifir ihlal, zengin Streamlit dashboard.
+
+Anahtar mesaj: RL ajan, peak guc taleplerinde superkapasitoru dogru kullanarak batarya akimini I\_max'in yuzde 25'i altinda tutmayi ogrendi. Bu, deneyimle kesfedilmis bir davranis.''
+\end{sayboks}
+
+% =============================================================================
+\section{Slayt 23 --- Tesekkur \& Sorular (15 sn)}
+% =============================================================================
+
+\begin{slytboks}
+\centering
+{\Huge \textbf{Tesekkurler}}\\[1.5em]
+{\Large Sorulariniz?}\\[1.5em]
+\normalsize Can Tekin --- BTU EEM --- EUYZ458
+\end{slytboks}
+
+\begin{gorselboks}
+BTU logosu + iletisim + repo linki
+\end{gorselboks}
+
+\begin{sayboks}
+``Beni dinlediginiz icin tesekkurler. Sorularinizi bekliyorum.''
+\end{sayboks}
+
+% =============================================================================
+\section*{Slayt 24 (YEDEK) --- Hazir Cevap Karti}
+\addcontentsline{toc}{section}{Slayt 24 --- Yedek Q\&A Karti}
+% =============================================================================
+
+\begin{tcolorbox}[colback=red!5,colframe=red!50!black,boxrule=0.4pt,
+                  title={\color{white}\bfseries Bu slaytı GOSTERME --- sadece sen bakacaksin}]
+\textbf{Hocanin olasi sorularina hazir cevaplar:}
+\end{tcolorbox}
+
+\textbf{S1: Q-tablo coverage neden bu kadar dusuk?}\\
+``Senaryo bazli egitim. Ajan gormedigi state'lere zaten gitmiyor. DQN'le kapsama genislerdi ama tabular daha aciklanabilir.''
+
+\textbf{S2: Reward shaping kullandiginiz icin RL gercekten ogrendi mi?}\\
+``Shaping egitim hizini artirmak icin, Ng 1999. Aksiyonlarin timing'ini ajan kendi ogrendi. Saf reward ile binlerce episode gerekirdi.''
+
+\textbf{S3: Neden tabular Q-Learning, DQN degil?}\\
+``Aciklanabilirlik. Q-tablosu acik, DQN deadly triad. Bu state uzayi kucuk; tabular yeterli.''
+
+\textbf{S4: 2RC parametreleri nereden?}\\
+``Plett 2015 ders kitabi. Gelecek gelistirme: CS2 verisinden EIS / pulse fit.''
+
+\textbf{S5: Pack faktoru 5500 niye?}\\
+``45 kW / 5500 = 8.18 W per cell, CS2 fiziksel max. Mantiksal pack 5500 hucre.''
+
+\textbf{S6: Regen override RL degil, bu adil mi?}\\
+``Guvenlik kurali. Dolu bataryaya regen yuklemek SOC max ihlali. Gelecek gelistirme.''
+
+\textbf{S7: \%98 basari nasil hesaplandi?}\\
+``5 bilesenli agirlikli: pik koruma 30, sc peak 25, regen 20, ihlal yok 15, supply 10. Toplam 98.''
+
+\textbf{S8: Demand esikleri (0.10, 0.25, 0.50, 0.80) niye?}\\
+``Hiz profili dagilimi gozlenerek. Sensitivity analizi yapilirsa optimize edilebilir.''
+
+\textbf{S9: Gamma 0.95 neden?}\\
+``$1/(1-\gamma) = 20$ adim ufuk. 200 step episode icin yeterli. 0.99 olsa yakinsama yavaslar.''
+
+\textbf{S10: Superkap kapasitansi 100 F nereden?}\\
+``Maxwell BCAP serisi tipik EDLC. Enerji $\sim$ 0.1 Wh, peak yardimi icin yeterli.''
+
+% =============================================================================
+\section*{Genel Ipuclari}
+\addcontentsline{toc}{section}{Genel Ipuclari}
+% =============================================================================
+
+\begin{itemize}
+\item \textbf{Tempo:} Her slaytta 30-90 saniye, toplam 18-20 dk
+\item \textbf{Slayt yogunlugu:} Slaytta cok yazi yok, gorsel + 3-5 madde
+\item \textbf{Speaker notes:} Yesil kutudaki metni Speaker Notes alanina yapistir
+\item \textbf{Demo suresi:} 4-5 dakika, fazla uzatma
+\item \textbf{Q\&A tutumu:} Kisa cevap $\to$ ``Bu yapilmadi cunku ...'' formulu
+\item \textbf{Ilk 3 slayt kritik:} Heyecanini bastir, akici gec
+\item \textbf{Soru gelmezse:} ``Demo isteyen var mi?'' diye don, ek senaryo ac
+\end{itemize}
+
+\end{document}

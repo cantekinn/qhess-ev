@@ -1,0 +1,30 @@
+# CALCE CS2 LiCoO2 prizmatik hücre — 2RC Thevenin ECM parametreleri
+# Q_nom: nominal kapasite, V_max/V_min: kullanım voltajı pencere
+
+cell:
+  chemistry: "LiCoO2"
+  Q_nom_Ah: 1.1           # CS2 nominal kapasite
+  V_nom: 3.7
+  V_max: 4.2
+  V_min: 3.0
+  I_max_dis_A: 2.2        # CS2_3 max deşarj (2C)
+  I_max_chg_A: 1.1        # standart CC/CV şarj
+  T_ref_C: 25.0
+
+# 2RC parametreleri (literatür/CS2 fit başlangıç değerleri, sayfa 2'de fine-tune)
+ecm:
+  R0_ohm: 0.085           # iç direnç (ohmic)
+  R1_ohm: 0.045           # RC1 (kısa zaman sabiti, electrochemical polarization)
+  C1_F: 2200.0
+  R2_ohm: 0.030           # RC2 (uzun zaman sabiti, diffusion)
+  C2_F: 18000.0
+  # Zaman sabitleri: tau1 = R1*C1 ≈ 99s, tau2 = R2*C2 ≈ 540s
+
+soc_limits:
+  soc_min: 0.10           # alt sınır (cycle life için)
+  soc_max: 0.95
+  soc_ref: 0.60           # SOC sustaining hedefi (opsiyonel)
+
+cycle_life:
+  cycles_nominal: 500     # 80% kapasiteye düşene kadar
+  ah_throughput_eol: 1100 # toplam Ah, basit Wang model proxy
