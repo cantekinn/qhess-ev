@@ -1,142 +1,225 @@
-# HESS Akıllı Güç Yöneticisi
+<div align="center">
 
-Batarya + Süperkapasitör **hibrit enerji depolama sistemi (HESS)** için **Q-Learning** tabanlı dinamik güç paylaşım kontrolü. CALCE CS2 batarya verisi, 2RC Thevenin batarya ECM, RC+ESR süperkapasitör, longitudinal araç dinamiği ve 5 farklı sürüş senaryosu üzerine kurulu Streamlit dashboard.
+# QHESS-EV
 
-**Ders:** Endüstriyel Uygulamalarda Yapay Zeka (EUYZ) — Lisans Bitirme Projesi
-**Geliştirici:** Can Tekin
+### Q-Learning based Hybrid Energy Storage Management for Electric Vehicles
+
+**Battery + Supercapacitor power-share control via Reinforcement Learning, with live vehicle animation and 5 real-world driving scenarios.**
+
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.32%2B-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![CALCE](https://img.shields.io/badge/Data-CALCE_CS2-2E7D32)](https://calce.umd.edu/battery-data#CS2)
+[![License](https://img.shields.io/badge/License-Academic-blue)](#license)
+[![Status](https://img.shields.io/badge/Status-Working-success)]()
+
+</div>
 
 ---
 
-## Hızlı Başlangıç
+## What is this?
+
+When an electric vehicle accelerates hard or overtakes another car, the battery experiences a **current spike** that ages it faster. A **supercapacitor** is much better at handling these transient peaks but cannot store enough energy for the entire trip. A **hybrid energy storage system (HESS)** combines both — but **who decides which one to use, when, and how much?**
+
+This project trains a **tabular Q-Learning agent** that learns this power-sharing policy from physics-based interactions, then visualizes its decisions in real time as a virtual car drives through five distinct scenarios.
+
+```
+   battery limits exceeded?  →  supercap takes over
+   demand normalizes?        →  battery returns
+   regen braking?            →  energy recovered into supercap
+```
+
+---
+
+## Demo
+
+> *Screenshots/GIFs to be added after final demo run.*
+
+| | |
+|---|---|
+| **Training page** — live reward curve, scenario picker, Q-table coverage | *[screenshot placeholder]* |
+| **Simulation page** — vehicle animation, SOC bars, power-flow diagram | *[screenshot placeholder]* |
+| **Power flow** — battery / supercap / DC bus with live kW arrows | *[screenshot placeholder]* |
+
+---
+
+## Quick Start
 
 ```bash
-cd EUYZ_RL_Dashboard
-py -m pip install -r requirements.txt
+git clone https://github.com/cantekinn/qhess-ev.git
+cd qhess-ev
+pip install -r requirements.txt
 streamlit run streamlit_app.py
 ```
 
-Tarayıcı `http://localhost:8501` adresinde otomatik açılır.
+Browser opens at `http://localhost:8501` automatically.
 
-### Konfigürasyon (önemli)
+A pre-trained model is included in `models/`, so **simulation works out of the box** — no training required to see the demo.
 
-`config/paths.yaml` içindeki `dataset_root` mutlak yol içerir (CALCE veri seti yolu). Kendi sisteminde çalıştırmak için bu yolu kendi makinene göre düzenle:
+### Optional: train your own agent
 
-```yaml
-dataset_root: "C:/path/to/Endustriyel Uygulamalarda Yapay Zeka Projesi"
-```
-
-> **Not:** CALCE CS2 veri seti büyük boyutlu olduğu için bu repoya dahil edilmedi. Veri seti gerekirse [CALCE Battery Data](https://calce.umd.edu/battery-data#CS2) üzerinden indirilebilir. Repoda hazır eğitilmiş model (`models/ql_*.pkl`) ile dataset olmadan da simülasyon koşturulabilir.
+1. Open the **Training** page
+2. Pick scenarios (default: all five)
+3. Set hyperparameters (default: 150 episodes, α=0.15, γ=0.95)
+4. Click **Start Training** — finishes in ~25 seconds
+5. Switch to **Simulation** and select your fresh model
 
 ---
 
-## Sayfa Yapısı
+## How it works
 
-| Sayfa | İçerik |
+### Reinforcement Learning
+
+| Concept | This project |
 |---|---|
-| **Ana Sayfa** | Sistem özeti, senaryo kartları, hızlı bağlantılar |
-| **1 · Eğitim** | Q-Learning ajanını seçtiğin senaryolarda eğit, canlı reward eğrisi, model otomatik kaydet |
-| **2 · Simülasyon** | Eğitilmiş ajanı bir senaryoda koştur. Animasyonlu araç, anlık SOC barları, güç paylaşım donut, güç akış diyagramı, 3'lü zaman serisi |
+| **State** $s \in \mathbb{R}^8$ | `[P_load, SOC_bat, SOC_sc, V_bat, V_sc, I_bat_prev, I_sc_prev, demand_code]` |
+| **Action** $a \in \{0,1,2,3,4\}$ | Battery / supercap power-share ratios: `(1.0/0)`, `(0.75/0.25)`, `(0.5/0.5)`, `(0.25/0.75)`, `(0/1.0)` |
+| **Policy** $\pi$ | ε-greedy (ε: 1.0 → 0.05 over training) |
+| **Update** | $Q(s,a) \leftarrow Q(s,a) + \alpha\,[r + \gamma\,\max_{a'} Q(s',a') - Q(s,a)]$ |
+| **Reward** | 5-term shaped: $r = R_\text{base} + R_\text{match} + R_\text{supply} - P_\text{loss} - I_\text{stress} - C_\text{violation}$ |
+
+### Physical Models
+
+| Component | Model | Reference |
+|---|---|---|
+| Battery | 2RC Thevenin ECM (exact exp. solver) | Plett, *BMS Vol. 2* (2015) |
+| Supercapacitor | Classic RC + ESR, energy-based SOC | $E = \tfrac{1}{2}CV^2$ |
+| DC-DC converter | Load-dependent efficiency | $\eta(P) = \eta_\text{min} + (\eta_\text{nom} - \eta_\text{min})(1 - e^{-2|P|/P_\text{rated}})$ |
+| Vehicle | Longitudinal Newtonian dynamics | $F = ma + mgC_r + \tfrac{1}{2}\rho C_d A v^2 + mg\sin\theta$ |
+
+### Driving Scenarios
+
+| Scenario | Duration | Description | Expected behavior |
+|---|---|---|---|
+| **City stop-go** | 120 s | 0 → 50 km/h repeated, regen active | Moderate demand, frequent regen → supercap charges |
+| **Overtaking** | 60 s | 80 → 120 km/h burst, then cruise | Short peak (> 30 kW) → supercap takes load |
+| **Highway cruise** | 90 s | 100 km/h steady | Steady moderate demand → mostly battery |
+| **Mixed urban** | 180 s | Stop-go + overtake + cruise | Tests adaptation across regimes |
+| **Mountain climb** | 150 s | 6% grade, 60 km/h sustained | Continuous high demand → battery stress |
 
 ---
 
-## Mimari
+## Architecture
 
 ```
-EUYZ_RL_Dashboard/
-├── streamlit_app.py            # Ana sayfa (entry point)
+qhess-ev/
+├── streamlit_app.py             Entry point (home page)
 ├── pages/
-│   ├── 1_Egitim.py             # Q-Learning eğitim arayüzü
-│   └── 2_Simulasyon.py         # Test/simülasyon arayüzü (canlı animasyon)
+│   ├── 1_Egitim.py              Training UI
+│   └── 2_Simulasyon.py          Simulation UI with vehicle animation
 ├── src/
-│   ├── data/loader.py          # CALCE CS2 yükleme + OCV-SOC çıkarımı
+│   ├── data/loader.py           CALCE CS2 loader + OCV-SOC extraction
 │   ├── physics/
-│   │   ├── battery_ecm.py      # 2RC Thevenin (exact exp solver)
-│   │   ├── supercap_model.py   # RC + ESR, enerji-tabanlı SOC
-│   │   └── converter.py        # Yük-bağımlı η DC-DC modeli
-│   ├── vehicle.py              # Longitudinal araç dinamiği
-│   ├── scenarios.py            # 5 sürüş senaryosu üreticisi
-│   ├── env/hess_env.py         # HESS environment + reward
+│   │   ├── battery_ecm.py       2RC Thevenin (Plett solver)
+│   │   ├── supercap_model.py    RC + ESR, energy-based SOC
+│   │   └── converter.py         Load-dependent η DC-DC
+│   ├── vehicle.py               Longitudinal vehicle dynamics
+│   ├── scenarios.py             Five driving scenario generators
+│   ├── env/hess_env.py          Gym-style HESS environment + reward
 │   ├── agents/
-│   │   ├── q_learning.py       # Tabular Q-Learning + replay
-│   │   └── runner.py           # train_one_episode, evaluate_policy
-│   ├── metrics/kpi.py          # KPI hesaplama + success_score
-│   └── utils/                  # Config + plotting yardımcıları
-├── config/
-│   ├── paths.yaml              # Veri seti yolu (kendine göre düzenle)
-│   ├── battery.yaml            # 2RC ECM parametreleri
-│   ├── supercap.yaml           # RC+ESR parametreleri
-│   ├── converter.yaml          # DC-DC verimleri
-│   ├── vehicle.yaml            # Araç (kompakt EV)
-│   ├── scenarios.yaml          # Senaryo meta verileri
-│   ├── reward.yaml             # Reward ağırlıkları
-│   └── training.yaml           # Hiperparametreler
-├── models/                     # Eğitilmiş Q-tabloları (.pkl)
-├── logs/                       # Eğitim reward CSV'leri
-├── docs/                       # RAPOR.tex, SUNUM.tex, vb.
+│   │   ├── q_learning.py        Tabular Q-Learning + episode replay
+│   │   └── runner.py            train_one_episode, evaluate_policy
+│   ├── metrics/kpi.py           Compute KPIs + 0–100 success score
+│   └── utils/                   Config & plotting helpers
+├── config/                      All hyperparameters as YAML
+├── models/                      Trained Q-tables (.pkl)
+├── logs/                        Training reward CSVs
+├── docs/                        Technical report + presentation (LaTeX)
 └── requirements.txt
 ```
 
 ---
 
-## Teorik Temel
+## Success Metric
 
-### Reinforcement Learning
-- **MDP:** $(\mathcal{S}, \mathcal{A}, P, R, \gamma)$ — state, action, geçiş, ödül, indirim faktörü
-- **Q-Learning güncelleme:** $Q(s,a) \leftarrow Q(s,a) + \alpha [r + \gamma \max_{a'} Q(s',a') - Q(s,a)]$
-- **Politika:** ε-greedy ($1-\varepsilon$ ile exploit, $\varepsilon$ ile explore)
-- **State (8-D):** `[P_load, SOC_bat, SOC_sc, V_bat, V_sc, I_bat_prev, I_sc_prev, demand_code]`
-- **Action (5 ayrık):** batarya/süperkap güç paylaşım oranı `{(1.0, 0.0), (0.75, 0.25), (0.5, 0.5), (0.25, 0.75), (0.0, 1.0)}`
+Each scenario is scored 0–100 by a weighted sum of five components:
 
-### Fiziksel Modeller
-- **Batarya:** 2RC Thevenin ECM, Plett (2015) standardı, exact exponential solver
-- **Süperkap:** Klasik RC + ESR, enerji-tabanlı SOC: $(V^2 - V_{min}^2)/(V_{max}^2 - V_{min}^2)$
-- **DC-DC Converter:** Yük-bağımlı verim modeli, $\eta(P) = \eta_{min} + (\eta_{nom} - \eta_{min})(1 - e^{-2|P|/P_{rated}})$
-- **Araç dinamiği (Newton):** $F = m\,a + m\,g\,C_r + \tfrac{1}{2}\rho\,C_d\,A\,v^2 + m\,g\sin\theta$
+| Weight | Component | Measures |
+|---:|---|---|
+| 30% | Peak protection | Did peak battery current stay below 80% of $I_\text{max}$? |
+| 25% | Supercap at peak | When demand was high, was supercap engaged? |
+| 20% | Regen capture | During braking, was energy stored in supercap? |
+| 15% | No violations | Did SOC/current limits hold? |
+| 10% | Supply quality | Was the requested power actually delivered? |
 
-### Senaryolar (5 adet)
-| Senaryo | Süre | Tasvir |
-|---|---|---|
-| `city_stop_go` | 120 s | Trafikte 0-50 km/h tekrarlı, regen aktif |
-| `overtaking` | 60 s | 80 → 120 km/h kısa süreli PEAK |
-| `highway_cruise` | 90 s | 100 km/h sabit |
-| `mixed_urban` | 180 s | Dur-kalk + sollama + cruise karışımı |
-| `mountain_climb` | 150 s | %6 eğim, sürekli yüksek talep |
+**Current performance** (using the included pre-trained model):
 
-### Reward Fonksiyonu (5 terim)
-$$r_t = R_{base} + R_{match\_demand} + R_{supply\_quality} - P_{loss,norm} - I_{bat,stress} - C_{violation}$$
+| Scenario | Success Score |
+|---|:---:|
+| Overtaking | **98.0%** |
+| City stop-go | **98.9%** |
+| Mixed urban | **96.2%** |
 
-### Başarı Skoru (0-100, ağırlıklı)
+---
+
+## Configuration
+
+Everything is YAML, no code edits required for tuning:
+
 ```
-0.30 · pik batarya akımı koruması
-0.25 · yüksek talepte süperkap kullanımı
-0.20 · rejen sırasında süperkap şarjı
-0.15 · kısıt ihlali olmaması
-0.10 · talep karşılanma oranı
+config/
+├── paths.yaml         Dataset path (edit this for your machine)
+├── battery.yaml       2RC parameters: Q_nom, R0/R1/C1/R2/C2, V_min/V_max
+├── supercap.yaml      C, ESR, V_min/V_max, energy/voltage SOC mode
+├── converter.yaml     η_min, η_nom, P_rated for battery and supercap branches
+├── vehicle.yaml       Mass, drag, rolling, drivetrain efficiency, pack factor
+├── scenarios.yaml     Speed profiles for each scenario
+├── reward.yaml        Five-term weight tuning
+└── training.yaml      α, γ, ε decay, episode count, action table, state bins
 ```
 
----
-
-## Veri Kaynağı
-
-CALCE Battery Data Group, University of Maryland Center for Advanced Life Cycle Engineering. CS2 hücreleri: 1100 mAh LiCoO₂ prizmatik. Ham veri seti GitHub'a dahil edilmemiştir; OCV-SOC eğrisi cache'lendi (`data_cache/ocv_soc.pkl`) — dataset olmadan da çalışır.
+> **Note on dataset path:** `config/paths.yaml > dataset_root` points to the CALCE CS2 dataset on the original machine. The dataset is **not included** due to size and licensing. The OCV-SOC curve is cached in `data_cache/ocv_soc.pkl`, so the project **runs without the raw dataset**. To regenerate the cache from raw data, download CS2 from [CALCE](https://calce.umd.edu/battery-data#CS2) and update the path.
 
 ---
 
-## Kullanım Akışı
+## Tech Stack
 
-1. **Ana sayfada** sistem özetini ve 5 senaryoyu incele
-2. **Eğitim sayfasında**:
-   - Senaryoları seç (birden fazla seçilirse her epizotta rastgele biri)
-   - Hiperparametreleri ayarla (default: 150 epizot, α=0.15, γ=0.95)
-   - "Eğitimi Başlat" → canlı reward eğrisini izle (~25 sn)
-   - Model otomatik `models/ql_<timestamp>.pkl` olarak kaydedilir
-3. **Simülasyon sayfasında**:
-   - Senaryo seç + kayıtlı modeli seç
-   - "Oynat" → araç animasyonunu, anlık SOC barlarını ve güç akışını canlı izle
-   - Senaryo sonunda başarı skoru ve KPI tablosu
+- **Python 3.10+** — core
+- **Streamlit** — interactive dashboard
+- **NumPy, Pandas, SciPy** — numerics
+- **Plotly** — live interactive charts
+- **PyYAML** — configuration
+
+No heavy ML frameworks (no PyTorch, no TensorFlow) — tabular Q-Learning runs in pure NumPy.
 
 ---
 
-## Lisans
+## Theory Foundation
 
-Akademik amaçlı, EUYZ dersi bitirme projesi. CALCE veri seti kullanım koşulları CALCE Battery Data Group politikalarına tabidir.
+This project sits at the intersection of three fields:
+
+- **Reinforcement Learning** — Sutton & Barto, *Reinforcement Learning: An Introduction* (2018)
+- **Battery Modeling** — Plett, *Battery Management Systems Vol. 2: Equivalent-Circuit Methods* (2015)
+- **Hybrid Energy Storage Control** — Song et al., *Multi-objective optimization of HESS via DP*, J. Power Sources (2014)
+
+The reward shaping approach follows Ng, Harada, Russell, *Policy invariance under reward transformations*, ICML 1999, ensuring the shaped reward preserves the optimal policy.
+
+---
+
+## Limitations & Future Work
+
+| Known limitation | Mitigation path |
+|---|---|
+| Tabular Q-Learning's state-space coverage ~7% after 150 episodes | Train longer or switch to DQN with function approximation |
+| Reward shaping pre-encodes preferred policy structure | Move to pure objective rewards + 5000+ episodes |
+| Regen power split is rule-based, not RL-controlled | Extend action space to include regen-specific actions |
+| Single battery cell physics, scaled via `pack_factor` | Full pack-level modeling with cell imbalance |
+| No thermal model | Add lumped thermal coupling with reward penalty |
+| No DP/MPC baseline comparison | Add offline DP solution as upper-bound benchmark |
+
+---
+
+## Documentation
+
+Full technical report and presentation script (LaTeX, both ~25 pages):
+
+- `docs/RAPOR.tex` — line-by-line code walk-through, theory, design rationale
+- `docs/SUNUM.tex` — slide-by-slide presentation script with anticipated Q&A
+- `docs/PROJE_OZET.md` — high-level Turkish summary
+
+Compile with any LaTeX distribution (TeX Live, MiKTeX) or upload to [Overleaf](https://overleaf.com).
+
+---
+
+## License
+
+Academic use only. CALCE CS2 dataset is subject to the CALCE Battery Data Group's terms of use.
